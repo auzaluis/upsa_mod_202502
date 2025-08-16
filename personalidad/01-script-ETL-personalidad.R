@@ -3,7 +3,8 @@
 library(pacman)
 p_load(
   gsheet,
-  tidyverse
+  tidyverse,
+  scales
 )
 
 # Tema 01: Carga de datos ----
@@ -87,9 +88,36 @@ df2 <- na.omit(df2)
 ### Normalización
 scale(df2$`Escribe tu edad exacta`)
 
-# crear un df que se llame df3 que tenga una nueva columna que se llame
-# edad_z que contenga el valor normalizado de 'escribe tu edad exacta'
-# ubicarla al lado de edad2
+df3 <- df2 |> 
+  mutate(edad_z = scale(`Escribe tu edad exacta`)) |> 
+  relocate(edad_z, .after = edad2)
+
+
+### Rango (0-1)
+rescale(df3$`Escribe tu edad exacta`)
+
+df3 <- df3 |> 
+  mutate(edad_r = rescale(`Escribe tu edad exacta`)) |> 
+  relocate(edad_r, .after = edad_z)
+
+
+## Agrupaciones ----
+
+## Rangos numéricos
+cut(
+  df3$`Escribe tu edad exacta`,
+  breaks = c(-Inf, 18, 21, Inf),
+  labels = c("18 o menos", "19 a 21", "Más de 21")
+)
+
+df4 <- df3 |> 
+  mutate(edad_gr = cut(`Escribe tu edad exacta`,
+                       breaks = c(-Inf, 18, 21, Inf),
+                       labels = c("18 o menos", "19 a 21", "Más de 21"))) |> 
+  relocate(edad_gr, .after = edad_r)
+
+
+
 
 
 
