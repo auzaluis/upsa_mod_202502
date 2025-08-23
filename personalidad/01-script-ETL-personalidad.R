@@ -103,7 +103,7 @@ df3 <- df3 |>
 
 ## Agrupaciones ----
 
-## Rangos numéricos
+### Rangos numéricos ----
 cut(
   df3$`Escribe tu edad exacta`,
   breaks = c(-Inf, 18, 21, Inf),
@@ -117,8 +117,38 @@ df4 <- df3 |>
   relocate(edad_gr, .after = edad_r)
 
 
+### Categorías ----
+unique(df4$`Según tu forma de ser ¿Cuál de las siguientes frases te describe mejor: [No discrimino y trato a todos por igual]`)
+colnames(df4)
+unique(df4[,9])
+df4[,9] |> factor() |> summary()
 
+# usando ifelse, convertir la df4[,9] en 1 (Top2Box) caso contrario 0
+ifelse(
+  test = df4[,9] == "Un poco verdadero" | df4[,9] == "Totalmente verdadero",
+  yes = 1,
+  no = 0
+)
 
+ifelse(
+  test = df4[,9] %in% c("Un poco verdadero", "Totalmente verdadero"),
+  yes = 1,
+  no = 0
+)
 
+# Bucles (loop)
+## Paso 1: Crear una lista (vector) que contenga los nombres
+## de las columnas que quiero cambiar
+frases <- df4 |> select(starts_with("Según")) |> colnames()
+df5 <- df4
+
+## Paso 2: Ejecutar el bucle
+for (frase in frases) {
+  df5[,frase] <- ifelse(
+    test = df4[,frase] %in% c("Un poco verdadero", "Totalmente verdadero"),
+    yes = 1,
+    no = 0
+  )
+}
 
 
