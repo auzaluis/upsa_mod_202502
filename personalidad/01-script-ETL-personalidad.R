@@ -152,3 +152,40 @@ for (frase in frases) {
 }
 
 
+# Tema 03: Manipulación de datos ----
+
+# Convertir el data frame en un tibble
+df5 |> class()
+df5 <- df5 |> as_tibble()
+df5 |> class()
+
+## Selección de columnas ----
+df5 |> select(Sexo)
+df5 |> select(Sexo, `Escribe tu edad exacta`)
+df5 |> select(`Marca temporal`:Sexo)
+df5 |> select(-`Marca temporal`)
+df5 |> select(starts_with("edad"))
+df5 |> select(contains("edad"))
+df5 |> select(ends_with("00"))
+
+
+## Selección de filas ----
+df5 |> filter(Sexo == "Mujer")
+df5 |> filter(Sexo != "Hombre")
+
+df5 |>
+  select(Sexo, `Escribe tu edad exacta`) |> 
+  filter(`Escribe tu edad exacta` >= 18, `Escribe tu edad exacta` <= 21)
+
+df5 |>
+  select(Sexo, `Escribe tu edad exacta`) |> 
+  filter(`Escribe tu edad exacta` >= 18 & `Escribe tu edad exacta` <= 21)
+
+df5 |>
+  select(Sexo, `Escribe tu edad exacta`) |> 
+  filter(between(`Escribe tu edad exacta`, 18, 21))
+
+df5 |> 
+  select(Sexo, `Escribe tu edad exacta`, edad_gr) |> 
+  filter(Sexo == "Hombre",
+         edad_gr == "19 a 21")
