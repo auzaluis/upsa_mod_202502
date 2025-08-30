@@ -4,7 +4,8 @@ library(pacman)
 p_load(
   gsheet,
   tidyverse,
-  scales
+  scales,
+  plotly
 )
 
 # Tema 01: Carga de datos ----
@@ -235,6 +236,80 @@ df8 <- df7 |>
     names_from = app,
     values_from = time
   )
+
+
+# Tema 04: Valores atípicos
+
+class(df7$time)
+
+df7$time
+strsplit("14:30:00", split = ":")
+
+## Transformacion a número (horas)
+df7$time <- sapply(
+  strsplit(df7$time, split = ":"),
+  function(x) {
+    x <- as.numeric(x)
+    x[1] + x[2]/60 + x[3]/60^2
+  }
+)
+
+df7$time
+
+
+## Detección gráfica
+
+### Boxplot feo
+boxplot(df7$time)
+
+### Boxplot bonito
+ggplotly(
+  df7 |> 
+    ggplot(aes(x = app, y = time, fill = app)) +
+    geom_boxplot() +
+    facet_wrap(~ Sexo) +
+    theme_minimal() +
+    theme(legend.position = "none")
+)
+
+
+## Identificación / imputación
+
+df9 <- df7 |> 
+  mutate(
+    outlier = case_when(
+      app == "Facebook"  & Sexo == "Hombre" & time > 10    ~ 1,
+      app == "Instagram" & Sexo == "Hombre" & time > 10    ~ 1,
+      app == "TikTok"    & Sexo == "Hombre" & time > 18.27 ~ 1,
+      app == "Youtube"   & Sexo == "Hombre" & time > 11.57 ~ 1,
+      app == "Facebook"  & Sexo == "Mujer"  & time > 10    ~ 1,
+      app == "Instagram" & Sexo == "Mujer"  & time > 12    ~ 1,
+      app == "TikTok"    & Sexo == "Mujer"  & time > 20    ~ 1,
+      app == "Youtube"   & Sexo == "Mujer"  & time > 5.52  ~ 1,
+      .default = 0
+    )
+  ) |> 
+  mutate(
+    time2 = ifelse(
+      test = outlier == 1,
+      yes = NA,
+      no = time
+    )
+  )
+
+ggplotly(
+  df9 |> 
+    ggplot(aes(x = app, y = time2, fill = app)) +
+    geom_boxplot() +
+    facet_wrap(~ Sexo) +
+    theme_minimal() +
+    theme(legend.position = "none")
+)
+
+
+
+
+
 
 
 
