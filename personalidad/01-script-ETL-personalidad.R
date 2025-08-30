@@ -189,3 +189,59 @@ df5 |>
   select(Sexo, `Escribe tu edad exacta`, edad_gr) |> 
   filter(Sexo == "Hombre",
          edad_gr == "19 a 21")
+
+
+## Nombres de las columnas
+colnames(df5)
+df6 <- df5
+
+## apps
+
+### Paso 1: Crear un vector con los nuevos nombres
+apps <- c("TikTok", "Instagram", "Facebook", "Youtube")
+
+### Paso 2: Reemplazo
+# colnames(df6)[34:37] <- apps
+df6 <- df6 |> rename_with(~ apps, .cols = ends_with("00:00"))
+colnames(df6)
+
+# frases
+colnames(df6) <- gsub(
+  pattern = "Según tu forma de ser ¿Cuál de las siguientes frases te describe mejor: ",
+  replacement = "",
+  colnames(df6)
+)
+
+
+# Pivot ----
+## Pivot Longer ----
+df7 <- df6 |> 
+  pivot_longer(
+    cols = all_of(apps),
+    names_to = "app",
+    values_to = "time"
+  )
+
+df7 |> 
+  select(
+    `Marca temporal`,
+    app,
+    time
+  )
+
+## Pivot Wider
+df8 <- df7 |> 
+  pivot_wider(
+    names_from = app,
+    values_from = time
+  )
+
+
+
+
+
+
+
+
+
+
