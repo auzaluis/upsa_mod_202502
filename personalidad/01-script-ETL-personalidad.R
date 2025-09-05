@@ -307,8 +307,46 @@ ggplotly(
 )
 
 
+# Tema 05: Aggregations ----
 
+## Tablas de frecuencias
+df9 |> 
+  count(edad_gr,sort = T)
 
+df9 |> 
+  count(edad_gr) |> 
+  arrange(desc(n)) |> 
+  mutate(
+    prop = n/sum(n),
+    porcentaje = scales::percent(prop)
+  )
+
+df9 |> 
+  group_by(Sexo) |> 
+  count(edad_gr) |> 
+  mutate(
+    prop = n/sum(n),
+    porcentaje = scales::percent(prop)
+  )
+
+df9 |> 
+  group_by(Sexo) |> 
+  count(edad_gr) |> 
+  ungroup() |> 
+  mutate(
+    prop = n/sum(n),
+    porcentaje = scales::percent(prop)
+  )
+
+df9 |> 
+  group_by(app, Sexo) |> 
+  summarise(
+    n = n(),
+    promedio = mean(time),
+    desv = sd(time),
+    min = min(time),
+    max = max(time)
+  )
 
 
 
