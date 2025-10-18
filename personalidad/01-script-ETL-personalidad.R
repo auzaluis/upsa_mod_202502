@@ -146,7 +146,7 @@ df5 <- df4
 ## Paso 2: Ejecutar el bucle
 for (frase in frases) {
   df5[,frase] <- ifelse(
-    test = df4[,frase] %in% c("Un poco verdadero", "Totalmente verdadero"),
+    test = df5[,frase] %in% c("Un poco verdadero", "Totalmente verdadero"),
     yes = 1,
     no = 0
   )
