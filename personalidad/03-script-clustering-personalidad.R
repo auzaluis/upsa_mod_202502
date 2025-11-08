@@ -51,21 +51,61 @@ clustering <- NbClust(
 
 clustering
 
+# Tamaño de cada segmento
+table(clustering$Best.partition)
+table(clustering$Best.partition) |> prop.table()
 
 
+df12 <- df11 |> 
+  mutate(segmento = clustering$Best.partition)
 
 
+# Análisis de lo segmentos
+## Rasgos de personalidad
+df12 |> 
+  group_by(segmento) |> 
+  summarise(
+    crecimiento  = mean(crecimiento),
+    status       = mean(status),
+    aventura     = mean(aventura),
+    humildad     = mean(humildad),
+    tradicion    = mean(tradicion),
+    introversion = mean(introversion)
+  )
 
 
+df12 |> 
+  group_by(segmento) |> 
+  summarise(
+    TikTok    = mean(TikTok),
+    Facebook  = mean(Facebook),
+    Instagram = mean(Instagram),
+    Youtube   = mean(Youtube)
+  )
 
+## Mapa perceptual
+df12 |> 
+  group_by(segmento) |> 
+  summarise(
+    crecimiento  = rescale(crecimiento)  |> mean(),
+    status       = rescale(status)       |> mean(),
+    aventura     = rescale(aventura)     |> mean(),
+    humildad     = rescale(humildad)     |> mean(),
+    tradicion    = rescale(tradicion)    |> mean(),
+    introversion = rescale(introversion) |> mean()
+  ) |> 
+  column_to_rownames("segmento") |> 
+  CA()
 
-
-
-
-
-
-
-
-
+df12 |> 
+  group_by(segmento) |> 
+  summarise(
+    TikTok    = mean(TikTok),
+    Facebook  = mean(Facebook),
+    Instagram = mean(Instagram),
+    Youtube   = mean(Youtube)
+  ) |> 
+  column_to_rownames("segmento") |> 
+  CA()
 
 
